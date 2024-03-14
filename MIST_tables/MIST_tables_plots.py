@@ -6,33 +6,9 @@ import matplotlib.pyplot as plt
 
 'MIST table plots'
 
-sys.path.append( '/Project/MIST_tables' )
+sys.path.append( '/Project/MIST_tables/' )
 
-def load_mist_tables(Mstar=1., filepath='/Project/MIST_tables'):
-        """
-        Load in the MIST tables.
-        
-        Args:
-            Mstar: Stellar masses in units of solar masses
-            filepath: Path where the MIST tables are stored
-        Usage:
-            >> AGE_mist, TAU_mist, MOI_mist, MASS_mist, RADIUS_mist=load_mist_tables(Mstar=mass)
-            
-        """
-        import v2_read_mist_models
-        import astropy.units as u
-
-        print(filepath+f'/{Mstar}M_history.data')
-
-        eep = v2_read_mist_models.EEP(filepath+f'/{Mstar}M_history.data', verbose=False)
-        AGE_mist = (eep.eeps['star_age']*u.yr).to(u.Myr) # stellar age in Myears
-        TAU_mist = (eep.eeps['conv_env_turnover_time_g']*u.s).to(u.d) # convective turnover time in days
-        MOI_mist = eep.eeps['total_moment_of_inertia']*u.g*u.cm**2. # moment of inertia in cgs
-        MASS_mist = eep.eeps['star_mass']
-        log_RADIUS_mist = eep.eeps['log_R']
-        RADIUS_mist = 10**log_RADIUS_mist
-
-        return AGE_mist, TAU_mist, MOI_mist, MASS_mist, RADIUS_mist
+import load_mist_models
 
 def plot_tau(x, y, mass):
     """
@@ -156,21 +132,21 @@ def plot_radius(x, y, mass):
 # mass11_13 = np.arange(110, 135, 5) / 100 #0.05 steps
 # mass = np.concatenate((mass01_04, mass04_09, mass09_11, mass11_13))
 
-mass = np.arange(10, 20, 2) / 100
+mass = np.arange(10, 40, 2) / 100
 
 n_steps=len(mass)
 
 for i in range(n_steps):
-    AGE_mist, TAU_mist, MOI_mist, MASS_mist, RADIUS_mist=load_mist_tables(Mstar=mass[i])
+    AGE_mist, TAU_mist, MOI_mist, MASS_mist, RADIUS_mist=load_mist_models.load_mist_tables(Mstar=mass[i])
     
     #Tau plot
     plot_tau(AGE_mist, TAU_mist, mass[i])
     
     #MoI plot
-    plot_MoI(AGE_mist, MOI_mist, mass)
+    plot_MoI(AGE_mist, MOI_mist, mass[i])
     
     #Mass plot
-    plot_mass(AGE_mist, MASS_mist, mass)
+    plot_mass(AGE_mist, MASS_mist, mass[i])
     
     #Radius plot
-    plot_radius(AGE_mist, RADIUS_mist, mass)
+    plot_radius(AGE_mist, RADIUS_mist, mass[i])
