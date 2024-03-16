@@ -33,7 +33,7 @@ class EEP:
         if verbose:
             print('Reading in: ' + self.filename)
                         
-        self.version, self.hdr_list, self.eeps = self.read_eep_file()
+        self.version, self.abun, self.rot, self.minit, self.hdr_list, self.eeps = self.read_eep_file()
         
     def read_eep_file(self):
         
@@ -42,19 +42,22 @@ class EEP:
         Reads in the EEP file.
         
         Args:
-            filename: the name of .track.eep file.
+            filename: the name of .history.data.eep file.
                 
         """
         
-        eeps = np.genfromtxt(self.filename, skip_header=5, names=True)
+        eeps = np.genfromtxt(self.filename, skip_header=11, names=True)
         
         with open(self.filename) as f:
             content = [line.split() for line in f]
 
-        version = {'MIST': content[2][0], 'MESA': content[2][3], 'date': content[2][4]}
-        hdr_list = content[5][0:]
+        version = {'MIST': content[0][-1], 'MESA': content[1][-1]}
+        abun = {content[3][i]:float(content[4][i]) for i in range(1,5)}
+        rot = float(content[4][-1])
+        minit = float(content[7][1])
+        hdr_list = content[11][1:]
         
-        return version, hdr_list, eeps
+        return version, abun, rot, minit, hdr_list, eeps
         		
     def plot_HR(self, fignum=0, phases=[], phasecolor=[], **kwargs):
         

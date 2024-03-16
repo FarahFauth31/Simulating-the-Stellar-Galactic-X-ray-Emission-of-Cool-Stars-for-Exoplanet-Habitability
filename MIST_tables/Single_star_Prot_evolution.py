@@ -7,27 +7,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 import sys
+import common_lib
 
-sys.path.append( '/Project/MIST_tables/' )
+sys.path.append( '/home/farah/Documents/Redo_Project_Cfa/Final_MIST_tables/' )
 
 import spindown_model
 
-#Create mass array to find nearest neighbour
-def MIST_masses():
-    mass01_04 = np.arange(10, 40, 2) / 100 #0.02 steps
-    mass04_09 = np.arange(40, 90, 5) / 100 #0.05 steps
-    mass09_11 = np.arange(90, 110, 2) / 100 #0.02 steps
-    mass11_13 = np.arange(110, 135, 5) / 100 #0.05 steps
-    mass = np.concatenate((mass01_04, mass04_09, mass09_11, mass11_13))
-    return mass
-
-#Find nearest neighbour in array
-def find_nearest(array, value):
-    array = np.asarray(array)
-    idx = (np.abs(array - value)).argmin()
-    return array[idx]
-
+#Make inital rotation period distribution and resample Prots for different star masses
 def initial_Prot_dist():
+    
+    """
+    Creates an initial rotation period distribution from which it resamples rotation periods for different star masses.
+    It returns the resampled rotation period.
+
+    Args:
+        None.
+
+    Usage:
+        >> Prot_resampled = initial_Prot_dist()
+    
+    """   
     #Create an initial rotation period distribution from hPer data
     Full_m=data.Mass #Select the data set you want, in this case the mass (y data)
     Full_Prot=data.Per #Select the data set you want, in this case the rotation periods
@@ -65,7 +64,23 @@ def initial_Prot_dist():
             c+=1
     return Prot_resampled
 
-def plot_Prot_evolution(Calculated_Prot, Prot_evol):
+
+def plot_Prot_evolution(age, Calculated_Prot, Prot_evol, solar_mass):
+    
+    """
+    Plots the rotation period evolution of a star with a mass=solar_mass and an initial rotation period given by initial_Prot_dist().
+    It also plots the calculated rotation period the star has at a given age.
+
+    Args:
+        age: star age in Myrs.
+        Calculated_Prot: rotation period calculated at age.
+        Prot_evol: array containing all rotation period values at different stages in the star's life.
+        solar_mass: mass of star in units of M_sol.
+
+    Usage:
+        >> plot_Prot_evolution(age, Calculated_Prot, Prot_evol, solar_mass)
+    
+    """   
     #Plot Age vs Rotation period
     fig = plt.figure(figsize=(15, 10))
     fig.add_axes([0.1, 0.1, 0.8, 0.8]) #real plot
@@ -89,22 +104,22 @@ def plot_Prot_evolution(Calculated_Prot, Prot_evol):
     plt.tick_params(bottom=True, left=True, right=True)
     plt.tick_params(which='both',labelright=True)
 
-    plt.savefig('/Project/Data/Star_Evolution_Prot.png')
+    plt.savefig('/home/farah/Documents/Project/Data/Star_Evolution_Prot.png')
 
-###### BODY OF CODE ######
+###### BODY OF CODE STARTS HERE ######
 
-data = pd.read_csv("/Project/Data/hPer_Data.csv") #Read hPer csv file
-star_data = pd.read_csv("/Project/GaiaUniverseModel_0000.csv") #Read GUMS csv file
+data = pd.read_csv("/home/farah/Documents/Project/Data/hPer_Data.csv") #Read hPer csv file
+star_data = pd.read_csv("/media/farah/T7 Shield/GaiaUniverseModel_0000.csv") #Read GUMS csv file
 
-MASSES = MIST_masses()
+MASSES = common_lib.MIST_masses()
 
 # Resampled Prot data
 Prot_resampled = initial_Prot_dist()
 
 #Mass of the object we are studying using star data
-n_star=5
+n_star=30
 solar_mass=star_data.mass[n_star-1]
-used_mass=find_nearest(MASSES, solar_mass)
+used_mass=common_lib.find_nearest(MASSES, solar_mass)
 M0 = np.ones((Prot_resampled.shape))*used_mass
 
 # t0: time [Myr] at which the model should start 
@@ -117,7 +132,7 @@ age=star_data.age[n_star-1]*(10**3) #Age of star (it is given in Gyr and we pass
 Calculated_Prot=spl_Prot(age)
 
 #Plot Age vs Rotation period
-plot_Prot_evolution(Calculated_Prot, Prot_evol)
+plot_Prot_evolution(age, Calculated_Prot, Prot_evol, solar_mass)
 
 print('This star with a mass of ',solar_mass,' solar masses has an age of ',age,' Myrs. The calculated rotation period for that age is ',Calculated_Prot,' days.')
 

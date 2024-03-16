@@ -6,9 +6,10 @@ import matplotlib.pyplot as plt
 
 'MIST table plots'
 
-sys.path.append( '/Project/MIST_tables/' )
+sys.path.append( '/home/farah/Documents/Redo_Project_Cfa/Final_MIST_tables/' )
 
 import load_mist_models
+import common_lib
 
 def plot_tau(x, y, mass):
     """
@@ -126,13 +127,8 @@ def plot_radius(x, y, mass):
 
 ####### BODY OF CODE STARTS HERE #######
 
-# mass01_04 = np.arange(10, 40, 2) / 100 #0.02 steps
-# mass04_09 = np.arange(40, 90, 5) / 100 #0.05 steps
-# mass09_11 = np.arange(90, 110, 2) / 100 #0.02 steps
-# mass11_13 = np.arange(110, 135, 5) / 100 #0.05 steps
-# mass = np.concatenate((mass01_04, mass04_09, mass09_11, mass11_13))
-
-mass = np.arange(10, 40, 2) / 100
+mass = common_lib.MIST_masses()
+#mass = np.arange(98, 100, 2) / 100
 
 n_steps=len(mass)
 
@@ -150,3 +146,4 @@ for i in range(n_steps):
     
     #Radius plot
     plot_radius(AGE_mist, RADIUS_mist, mass[i])
+

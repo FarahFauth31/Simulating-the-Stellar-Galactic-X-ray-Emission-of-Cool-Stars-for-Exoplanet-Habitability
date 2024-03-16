@@ -4,41 +4,12 @@ import astropy.constants as const
 import sys
 import pickle
 
-#Create mass array with all the MIST masses we have
-mass01_04 = np.arange(10, 40, 2) / 100 #0.02 steps
-mass04_09 = np.arange(40, 90, 5) / 100 #0.05 steps
-# mass09_11 = np.arange(90, 110, 2) / 100 #0.02 steps
-# mass11_13 = np.arange(110, 135, 5) / 100 #0.05 steps
-MASSES = np.concatenate((mass01_04, mass04_09))
+sys.path.append( '/home/farah/Documents/Redo_Project_Cfa/Final_MIST_tables/' ) #You can download MIST tables from https://github.com/cgarraffo/Spin-down-model/tree/master/Mist_data
 
-#Function to find nearest neighbour in an array
-def find_nearest(array, value):
-    """
-    Find nearest neighbour in an array given a value
-    array: Contains all values
-    value: Variable from which we want to find the nearest neighbour in the array
-    """
-    array = np.asarray(array)
-    idx = (np.abs(array - value)).argmin()
-    return array[idx]
+import common_lib
+import load_mist_models
 
-#Function that loads all the MIST tables
-def load_data_spindownmodel(Mstar=1., filepath='Project/MIST_tables'):
-        """
-        Load in the MIST tables.
-        Mstar: Stellar masses in units of solar masses
-        filepath: Path where the MIST tables are stored
-        """
-        import v2_read_mist_models
-
-        print(filepath+f'/{Mstar}M_history.data')
-
-        eep = v2_read_mist_models.EEP(filepath+f'/{Mstar}M_history.data', verbose=False)
-        AGE_mist = eep.eeps['star_age']*u.yr # stellar age in years
-        TAU_mist = (eep.eeps['conv_env_turnover_time_g']*u.s).to(u.d) # convective turnover time in days
-        MOI_mist = eep.eeps['total_moment_of_inertia']*u.g*u.cm**2. # moment of inertia in cgs
-
-        return AGE_mist[50:], TAU_mist[50:], MOI_mist[50:]
+MASSES = common_lib.MIST_masses()
 
 #Function that defines cgs constants
 def define_cgs_constants():
@@ -88,11 +59,11 @@ def spin_down_evol(Prot_init, Mstar_init, t0=1., tdisc=13., a=0.02, b=2., J0=1e4
     ### EVOLVE ALGORITHM
     for j in range(N): 
         ### LOAD MIST table
-        AGE_mist, TAU_mist, MOI_mist = load_data_spindownmodel(Mstar=Mstar[j].value)
+        AGE_mist, TAU_mist, MOI_mist = load_mist_models.load_data_spindownmodel(Mstar=Mstar[j].value)
         
         #Age from MIST table at which the code should stop depending on mass of star
         index=int(np.where(MASSES==Mstar_init[j])[0]) #Find index of mass in the MASSES array
-        max_age=stop_MIST[index]*1e6*u.yr #Use that index to find the age at which the code should stop depending on mass of star
+        max_age=20000*1e6*u.yr #stop_MIST[index]*1e6*u.yr #Use that index to find the age at which the code should stop depending on mass of star
                 
         # time at which each star will start its rotational evolution [Myrs]
         t_DL = (tdisc-t0).to(u.yr)
@@ -148,32 +119,32 @@ def spin_down_evol(Prot_init, Mstar_init, t0=1., tdisc=13., a=0.02, b=2., J0=1e4
         Prot[Prot < 0.] = np.nan
         Prot_evol.append([Mstar[j], AGE_mist.to(u.Myr), Prot])
         
-        ### For masses m=0.1 and m=0.15 [Solar masses], the rotation period evolution behaves weirdly with initial rotation periods P_rot,i < 3 days. That's why we smooth the plots
-        if Mstar[j].value==MASSES[0] and Prot_init[j]<3: # for mass = 0.1 M_sol and Prot < 3 days, we smooth the plot 
-            # age at which code should stop
-            c1=AGE_mist.value
-            crit_age=390*1e6 #Age at which stars start to behave weirdly
-            d1=find_nearest(c1, crit_age)
-            ind=int(np.where(c1==d1)[0]) #Find index of value in AGE_mist array closest to the critical age
+        # ### For masses m=0.1 and m=0.15 [Solar masses], the rotation period evolution behaves weirdly with initial rotation periods P_rot,i < 3 days. That's why we smooth the plots
+        # if Mstar[j].value==MASSES[0] and Prot_init[j]<3: # for mass = 0.1 M_sol and Prot < 3 days, we smooth the plot 
+        #     # age at which code should stop
+        #     c1=AGE_mist.value
+        #     crit_age=390*1e6 #Age at which stars start to behave weirdly
+        #     d1=common_lib.find_nearest(c1, crit_age)
+        #     ind=int(np.where(c1==d1)[0]) #Find index of value in AGE_mist array closest to the critical age
             
-            #Open evolution of P_rot,i = 3 days (Create that file running the code for the Prot_init=np.array([3]) and Mstar_init=np.array([0.1]) and saving the ouput as a pickloe file)
-            with open(f'/Project/Data/Prot_i_3d_evolution_0.1M','rb') as f: file = pickle.load(f)
-            Prot_i_3_01=file*u.d 
+        #     #Open evolution of P_rot,i = 3 days (Create that file running the code for the Prot_init=np.array([3]) and Mstar_init=np.array([0.1]) and saving the ouput as a pickloe file)
+        #     with open(f'/home/farah/Documents/Project/Data/Prot_i_3d_evolution_0.1M','rb') as f: file = pickle.load(f)
+        #     Prot_i_3_01=file*u.d 
             
-            Prot[ind:]=Prot_i_3_01[ind:] #Smooth plot by using the evolution of P_rot,i = 3 days after the critical age
+        #     Prot[ind:]=Prot_i_3_01[ind:] #Smooth plot by using the evolution of P_rot,i = 3 days after the critical age
            
-        if Mstar[j].value==MASSES[1] and Prot_init[j]<3: # for mass = 0.15 M_sol and Prot < 3 days, we smooth the plot
-            # age at which code should stop
-            c1=AGE_mist.value
-            crit_age=550*1e6 #Age at which stars start to behave weirdly
-            d1=find_nearest(c1, crit_age)
-            ind=int(np.where(c1==d1)[0]) #Find index of value in AGE_mist array closest to the critical age
+        # if Mstar[j].value==MASSES[1] and Prot_init[j]<3: # for mass = 0.15 M_sol and Prot < 3 days, we smooth the plot
+        #     # age at which code should stop
+        #     c1=AGE_mist.value
+        #     crit_age=550*1e6 #Age at which stars start to behave weirdly
+        #     d1=common_lib.find_nearest(c1, crit_age)
+        #     ind=int(np.where(c1==d1)[0]) #Find index of value in AGE_mist array closest to the critical age
             
-            #Open evolution of P_rot,i = 3 days (Create that file running the code for the Prot_init=np.array([3]) and Mstar_init=np.array([0.15]) and saving the ouput as a pickloe file)
-            with open(f'/Project/Data/Prot_i_3d_evolution_0.15M','rb') as f: file = pickle.load(f)
-            Prot_i_3_015=file*u.d 
+        #     #Open evolution of P_rot,i = 3 days (Create that file running the code for the Prot_init=np.array([3]) and Mstar_init=np.array([0.15]) and saving the ouput as a pickloe file)
+        #     with open(f'/home/farah/Documents/Project/Data/Prot_i_3d_evolution_0.15M','rb') as f: file = pickle.load(f)
+        #     Prot_i_3_015=file*u.d 
             
-            Prot[ind:]=Prot_i_3_015[ind:] #Smooth plot by using the evolution of P_rot,i = 3 days after the critical age
+        #     Prot[ind:]=Prot_i_3_015[ind:] #Smooth plot by using the evolution of P_rot,i = 3 days after the critical age
 
         # interpolate all evolved Prots along the same age-array for the direct comparison
         # (as different masses were evolved for different long times in the MIST tables)
