@@ -39,7 +39,7 @@ def constrained_Evolution_plot(x, lim_period, Prot_evol):
     plt.plot(x, lim_period, color='red') #Plot the age at which the star leaves the main sequence
     for el in range(len(Prot_evol)):
         plt.plot( Prot_evol[el,1], Prot_evol[el,2])
-    #plt.savefig(f'/home/farah/Documents/Project/Pictures/Main_Sequence_Lifetime_{MASSES[i]}.png', bbox_inches='tight')
+    #plt.savefig(f'/home/farah/Documents/Redo_Project_Cfa/Prot_Evolution_Grid/Main_Sequence_Lifetime_{MASSES[i]}.png', bbox_inches='tight')
 
 
 ##### BODY OF CODE STARTS HERE #####
