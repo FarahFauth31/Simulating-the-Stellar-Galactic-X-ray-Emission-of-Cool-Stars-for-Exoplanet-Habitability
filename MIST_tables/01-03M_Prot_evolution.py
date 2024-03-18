@@ -48,11 +48,14 @@ def plot_Small_M_Prot_evolution(Prot_evol):
     plt.tick_params(which='both',labelright=True)
     
     #plt.savefig('/home/farah/Documents/Project/Data/Small_M_Evolution_Prot.png')
+    
+
+##### BODY OF CODE STARTS HERE ######
 
 # define initial rotation periods
 P0 = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1., 2, 3, 4, 5., 6, 7, 8, 9, 10.])
 
-mass = [0.2]
+mass = [0.16]
 
 for i in mass:
     # define initial stellar masses
