@@ -1,6 +1,7 @@
+'Read the MESA EEP files'
+
 import numpy as np
 import matplotlib.pyplot as plt
-import astropy.units as u
         
 class EEP:
     
@@ -56,6 +57,7 @@ class EEP:
         rot = float(content[4][-1])
         minit = float(content[7][1])
         hdr_list = content[11][1:]
+        f.close()
         
         return version, abun, rot, minit, hdr_list, eeps
         		

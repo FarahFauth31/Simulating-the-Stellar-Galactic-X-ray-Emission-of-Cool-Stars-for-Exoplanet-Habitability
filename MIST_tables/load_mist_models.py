@@ -1,8 +1,7 @@
-import astropy.units as u
-import astropy.constants as const
-import sys
-
 'Load MIST models'
+
+import astropy.units as u
+import sys
 
 sys.path.append( '/home/farah/Documents/Redo_Project_Cfa/Final_MIST_tables/' )
 

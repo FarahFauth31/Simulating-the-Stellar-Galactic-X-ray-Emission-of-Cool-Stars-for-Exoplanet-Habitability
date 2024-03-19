@@ -1,3 +1,5 @@
+'For a mass of 0.1-0.3 solar mass derive the rotation period evolution for a synthetic data of initial rotation periods'
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,8 +7,6 @@ from scipy import stats
 import astropy.units as u
 import astropy.constants as const
 import sys
-
-'For a mass of 0.1-0.3 solar mass derive the rotation period evolution for a synthetic data of initial rotation periods'
 
 sys.path.append( '/home/farah/Documents/Redo_Project_Cfa/Final_MIST_tables/' )
 

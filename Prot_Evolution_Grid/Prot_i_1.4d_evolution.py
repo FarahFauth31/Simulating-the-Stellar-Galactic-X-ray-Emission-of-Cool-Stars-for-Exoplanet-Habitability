@@ -112,6 +112,7 @@ for c in range(m_sample): #For each mass
     scatter_plot_Prot_evolution(Final_set)
     
     with open(f'/home/farah/Documents/Redo_Project_Cfa/Prot_Evolution_Grid/Prot_i_1.4d_evolution_{MASSES[c]}M','wb') as f: pickle.dump(Final_set[0][1], f) #Save data for one mass as a pickle file
+    f.close()
     #print(Final_set[0][1])
     #check_pickle_file(MASSES, Final_set[0][1])
 

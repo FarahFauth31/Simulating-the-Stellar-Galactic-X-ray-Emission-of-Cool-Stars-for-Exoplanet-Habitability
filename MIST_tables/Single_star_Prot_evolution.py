@@ -1,17 +1,15 @@
 'Rotation evolution of a single star'
 
-#Create initial rotation period data with hPer data
-
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 import sys
-import common_lib
 
 sys.path.append( '/home/farah/Documents/Redo_Project_Cfa/Final_MIST_tables/' )
 
 import spindown_model
+import common_lib
 
 #Make inital rotation period distribution and resample Prots for different star masses
 def initial_Prot_dist():
@@ -117,7 +115,7 @@ MASSES = common_lib.MIST_masses()
 Prot_resampled = initial_Prot_dist()
 
 #Mass of the object we are studying using star data
-n_star=30
+n_star=5
 solar_mass=star_data.mass[n_star-1]
 used_mass=common_lib.find_nearest(MASSES, solar_mass)
 M0 = np.ones((Prot_resampled.shape))*used_mass

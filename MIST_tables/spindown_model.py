@@ -1,6 +1,6 @@
+'Spindown Model (Variation of Garraffo et al. 2018)'
+
 import numpy as np
-import astropy.units as u
-import astropy.constants as const
 import sys
 import pickle
 
@@ -33,7 +33,6 @@ def spin_down_evol(Prot_init, Mstar_init, t0=1., tdisc=13., a=0.02, b=2., J0=1e4
     """
     import astropy.units as u
     from scipy.interpolate import InterpolatedUnivariateSpline
-    from scipy.interpolate import UnivariateSpline
     #from scipy.signal import savgol_filter
     
     M_sun, R_Sun, G = define_cgs_constants()
@@ -128,9 +127,9 @@ def spin_down_evol(Prot_init, Mstar_init, t0=1., tdisc=13., a=0.02, b=2., J0=1e4
             
             #Open evolution of P_rot,i = 1.4 days (Create that file running the code for the Prot_init=np.array([1.4]) and Mstar_init=np.array([0.1-0.16]) and saving the Prot ouput as a pickle file)
             with open(f'/home/farah/Documents/Redo_Project_Cfa/Prot_Evolution_Grid/Prot_i_1.4d_evolution_{Mstar[j].value}M','rb') as f: file = pickle.load(f)
-            Prot_i_14=file*u.d 
-            
+            Prot_i_14=file*u.d            
             Prot[ind:]=Prot_i_14[ind:] #Smooth plot by using the evolution of P_rot,i = 1.4 days after the critical age
+            f.close()
 
         #interpolate all evolved Prots along the same age-array for the direct comparison
         #(as different masses were evolved for different long times in the MIST tables)

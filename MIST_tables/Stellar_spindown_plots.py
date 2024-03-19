@@ -1,17 +1,14 @@
+'For a random mass sample create synthetic rotation period data and plot the rotation evolution for each mass'
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
-import astropy.units as u
-import astropy.constants as const
 import sys
-
-'For a random mass sample create synthetic rotation period data and plot the rotation evolution for each mass'
 
 sys.path.append( '/home/farah/Documents/Redo_Project_Cfa/Final_MIST_tables/' )
 
 import common_lib
-import load_mist_models
 import spindown_model
 
 #Create initial rotation period data with hPer data

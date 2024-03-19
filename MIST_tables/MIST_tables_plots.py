@@ -1,10 +1,7 @@
-import numpy as np
-import astropy.units as u
-import astropy.constants as const
+'MIST table plots'
+
 import sys
 import matplotlib.pyplot as plt
-
-'MIST table plots'
 
 sys.path.append( '/home/farah/Documents/Redo_Project_Cfa/Final_MIST_tables/' )
 

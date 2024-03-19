@@ -1,10 +1,7 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-from scipy import stats
-import sys
-
 'Common functions'
+
+import numpy as np
+import os
 
 def MIST_masses():
     """
@@ -40,6 +37,65 @@ def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return array[idx]
+
+def find_2_nearest(array, value):
+    """
+
+    This function finds the 2 array values nearest to the input value.
+    Returns the 2 nearest values from the array.
+
+    Args:
+        array: array with some values from which you want to find the 2 nearest to the input value
+        value: your input value
+
+    Usage:
+        >> value1, value2 = find_2_nearest(array, value)
+    
+    """
+
+    array = np.asarray(array)
+    dif = np.abs(array - value)
+    sort = np.argsort(dif)
+    idx = sort[0] #Nearest neighbour
+    idx2 = sort[1] #2nd nearest neighbour
+    return array[idx], array[idx2]
+
+def interpolation(a, b, x):
+    """
+
+    This function gives you the 2D interpolated result between two points.
+
+    Args:
+        a: array with the two x points you want to interpolate between.
+        b: array with the two y points you want to interpolate between.
+        x: point on the x axis at which we want to interpolate.
+
+    Usage:
+        >> y_interpol = interpolation(a, b, x)
+    
+    """
+
+    output = b[0] + (x - a[0]) * ((b[1] - b[0])/(a[1] - a[0]))
+    return output
+
+def find(name, path):
+    """
+
+    This function finds the document stated.
+    If the document is found it returns the whole path name, if it is not found it returns 'None'.
+
+    Args:
+        name: file name (string).
+        path: file path (string).
+
+    Usage:
+        >> path = find(name, path)
+    
+    """
+
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
 
 def MS_turn_off():
     """

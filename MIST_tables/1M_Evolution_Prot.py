@@ -1,17 +1,12 @@
-import pandas as pd
+'For a mass of 1 solar mass derive the rotation period evolution for a synthetic data of initial rotation periods'
+
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import stats
-import astropy.units as u
-import astropy.constants as const
 import sys
-
-'For a mass of 1 solar mass derive the rotation period evolution for a synthetic data of initial rotation periods'
 
 sys.path.append( '/home/farah/Documents/Redo_Project_Cfa/Final_MIST_tables/' )
 
 import common_lib
-import load_mist_models
 import spindown_model
 
 def plot_1M_Prot_evolution(Prot_evol):
