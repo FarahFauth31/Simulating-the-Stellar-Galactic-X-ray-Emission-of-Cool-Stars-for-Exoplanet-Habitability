@@ -24,7 +24,7 @@ def empty_Final_set(MASSES, M_new, MIST_data, p_sample):
         p_sample: length of the rotation period array (how many rotation periods we are looking at).
 
     Usage:
-        >> scatter_plot_Prot_evolution(Final_set)
+        >> Final_set = empty_Final_set(MASSES, M_new, MIST_data, p_sample)
     
     """
     #Age at which the MIST table should stop depending on mass of star
@@ -109,3 +109,4 @@ for c in range(m_sample): #For each mass
     f.close()
 
 #print(Final_set) #Print final array with all data for one mass
+

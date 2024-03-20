@@ -116,7 +116,7 @@ Prot_resampled = initial_Prot_dist()
 
 #Mass of the object we are studying using star data
 n_star=5
-solar_mass=star_data.mass[n_star-1]
+solar_mass=1#star_data.mass[n_star-1]
 used_mass=common_lib.find_nearest(MASSES, solar_mass)
 M0 = np.ones((Prot_resampled.shape))*used_mass
 
@@ -126,7 +126,7 @@ Prot_evol, age_zero, Prot_interp, spl_Prot = spindown_model.spin_down_evol(Prot_
                                                         Mstar_init=M0, 
                                                         t0=1., tdisc=13.)
 #Select the rotation period for the age of the star
-age=star_data.age[n_star-1]*(10**3) #Age of star (it is given in Gyr and we pass it to Myr)
+age=4600#star_data.age[n_star-1]*(10**3) #Age of star (it is given in Gyr and we pass it to Myr)
 Calculated_Prot=spl_Prot(age)
 
 #Plot Age vs Rotation period

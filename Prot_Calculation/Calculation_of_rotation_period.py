@@ -130,65 +130,54 @@ def calculate_prot(Proti_file_directory, GUMS_file_directory):
     n_star=10#len(mrdata['ra']) #Number of stars in file we want to evaluate
                     
     for i in range(n_star):
-                        
-        s=0
-                        
-        while s<1:
-                        
-            Prot_i=initial_Prot(kde_ProtMass)[0] #Initial rotation period
-            Grid_Prot_i1,Grid_Prot_i2=common_lib.find_2_nearest(Initial_Prots, Prot_i) #Nearest initial rotation periods in grid
-            index1=int(np.where(Initial_Prots==Grid_Prot_i1)[0]) #Index of 1st nearest initial rotation period
-            index2=int(np.where(Initial_Prots==Grid_Prot_i2)[0]) #Index of 2nd nearest initial rotation period
-            mass=mrdata.mass[i] #Mass in solar masses
-            age=mrdata.age[i]*1000 #uniform_ages[i]*1000 #Age in Myrs
-                                    
-            Mass_1,Mass_2=common_lib.find_2_nearest(MASSES, mass) #Find 2 nearest masses from MIST tables
-                            
-            main_index1=int(np.where(MASSES==Mass_1)[0]) #Index of 1st nearest initial rotation period
-            main_index2=int(np.where(MASSES==Mass_2)[0]) #Index of 2nd nearest initial rotation period
-                            
-            arrayname1=main_array[main_index1]       
-            arrayname2=main_array[main_index2]                        
-                            
-            #Interpolate rotation period throughout whole life of star for the two MIST tables
-            spl_Prot_1 = InterpolatedUnivariateSpline(arrayname1[index1][0], arrayname1[index1][1], ext=0) #Interpolated line rotation period of Mass_1 and P_rot,i_1
-            spl_Prot_2 = InterpolatedUnivariateSpline(arrayname2[index1][0], arrayname2[index1][1], ext=0) #Interpolated line rotation period of Mass_2 and P_rot,i_1
-            spl_Prot_3 = InterpolatedUnivariateSpline(arrayname1[index2][0], arrayname1[index2][1], ext=0) #Interpolated line rotation period of Mass_1 and P_rot,i_2
-            spl_Prot_4 = InterpolatedUnivariateSpline(arrayname2[index2][0], arrayname2[index2][1], ext=0) #Interpolated line rotation period of Mass_2 and P_rot,i_2
+                                   
+        Prot_i=initial_Prot(kde_ProtMass)[0] #Initial rotation period
+        Grid_Prot_i1,Grid_Prot_i2=common_lib.find_2_nearest(Initial_Prots, Prot_i) #Nearest initial rotation periods in grid
+        index1=int(np.where(Initial_Prots==Grid_Prot_i1)[0]) #Index of 1st nearest initial rotation period
+        index2=int(np.where(Initial_Prots==Grid_Prot_i2)[0]) #Index of 2nd nearest initial rotation period
+        mass=mrdata.mass[i] #Mass in solar masses
+        age=mrdata.age[i]*1000 #uniform_ages[i]*1000 #Age in Myrs
                                 
-            #Calculate rotation period at specific age of star for the two MIST tables for different mass and different initial rotation period
-            interp_Prot_1=float(spl_Prot_1(age)) #Interpolated rotation period of Mass_1 and P_rot,i_1
-            interp_Prot_2=float(spl_Prot_2(age)) #Interpolated rotation period of Mass_2 and P_rot,i_1
-            interp_Prot_3=float(spl_Prot_3(age)) #Interpolated rotation period of Mass_1 and P_rot,i_2
-            interp_Prot_4=float(spl_Prot_4(age)) #Interpolated rotation period of Mass_2 and P_rot,i_2
+        Mass_1,Mass_2=common_lib.find_2_nearest(MASSES, mass) #Find 2 nearest masses from MIST tables
+                        
+        main_index1=int(np.where(MASSES==Mass_1)[0]) #Index of 1st nearest initial rotation period
+        main_index2=int(np.where(MASSES==Mass_2)[0]) #Index of 2nd nearest initial rotation period
+                        
+        arrayname1=main_array[main_index1]       
+        arrayname2=main_array[main_index2]                        
+                        
+        #Interpolate rotation period throughout whole life of star for the two MIST tables
+        spl_Prot_1 = InterpolatedUnivariateSpline(arrayname1[index1][0], arrayname1[index1][1], ext=0) #Interpolated line rotation period of Mass_1 and P_rot,i_1
+        spl_Prot_2 = InterpolatedUnivariateSpline(arrayname2[index1][0], arrayname2[index1][1], ext=0) #Interpolated line rotation period of Mass_2 and P_rot,i_1
+        spl_Prot_3 = InterpolatedUnivariateSpline(arrayname1[index2][0], arrayname1[index2][1], ext=0) #Interpolated line rotation period of Mass_1 and P_rot,i_2
+        spl_Prot_4 = InterpolatedUnivariateSpline(arrayname2[index2][0], arrayname2[index2][1], ext=0) #Interpolated line rotation period of Mass_2 and P_rot,i_2
                             
-            if np.isnan(interp_Prot_1) or np.isnan(interp_Prot_2) or np.isnan(interp_Prot_3) or np.isnan(interp_Prot_4):
-                s=0
-            else:
-                s=2
-    
-        #Create arrays with the two initial rotation periods we are looking at and the rotation periods calculated for each mass
-        two_Prot_i=[Grid_Prot_i1,Grid_Prot_i2] #Initial rotation periods
-        diff_Prot1=[interp_Prot_1,interp_Prot_3] #For Mass_1
-        diff_Prot2=[interp_Prot_2,interp_Prot_4] #For Mass_2
+        #Calculate rotation period at specific age of star for the two MIST tables for different mass and different initial rotation period
+        interp_Prot_1=float(spl_Prot_1(age)) #Interpolated rotation period of Mass_1 and P_rot,i_1
+        interp_Prot_2=float(spl_Prot_2(age)) #Interpolated rotation period of Mass_2 and P_rot,i_1
+        interp_Prot_3=float(spl_Prot_3(age)) #Interpolated rotation period of Mass_1 and P_rot,i_2
+        interp_Prot_4=float(spl_Prot_4(age)) #Interpolated rotation period of Mass_2 and P_rot,i_2
                         
-        #Calculate rotation period for each mass for Prot_i by interpolating between the two calculated rotation periods for the two nearest initial rotation periods in grid
-        Med_Prot1 = common_lib.interpolation(two_Prot_i, diff_Prot1, Prot_i)
-        Med_Prot2 = common_lib.interpolation(two_Prot_i, diff_Prot2, Prot_i)
-                        
-        #Create lists with the two nearest masses and the calculated rotation periods
-        two_masses=[Mass_1,Mass_2]
-        two_periods=[Med_Prot1,Med_Prot2]
-                        
-        #Calculate the final rotation period by interpolating between the two previous results
-        Final_Prot = common_lib.interpolation(two_masses, two_periods, mass)
+        if np.isnan(interp_Prot_1) or np.isnan(interp_Prot_2) or np.isnan(interp_Prot_3) or np.isnan(interp_Prot_4):
+            Final_Prot = np.nan
+        else:
+            #Create arrays with the two initial rotation periods we are looking at and the rotation periods calculated for each mass
+            two_Prot_i=[Grid_Prot_i1,Grid_Prot_i2] #Initial rotation periods
+            diff_Prot1=[interp_Prot_1,interp_Prot_3] #For Mass_1
+            diff_Prot2=[interp_Prot_2,interp_Prot_4] #For Mass_2
+                            
+            #Calculate rotation period for each mass for Prot_i by interpolating between the two calculated rotation periods for the two nearest initial rotation periods in grid
+            Med_Prot1 = common_lib.interpolation(two_Prot_i, diff_Prot1, Prot_i)
+            Med_Prot2 = common_lib.interpolation(two_Prot_i, diff_Prot2, Prot_i)
+                            
+            #Create lists with the two nearest masses and the calculated rotation periods
+            two_masses=[Mass_1,Mass_2]
+            two_periods=[Med_Prot1,Med_Prot2]
+                            
+            #Calculate the final rotation period by interpolating between the two previous results
+            Final_Prot = common_lib.interpolation(two_masses, two_periods, mass)
                                 
         PROT.append(Final_Prot)
-                        
-                        
-        if np.isnan(Final_Prot):
-            print('yes')
-            break
     
     #dictionary = {'Prot': PROT}  
     #dataframe = pd.DataFrame(dictionary) 
@@ -202,4 +191,3 @@ def calculate_prot(Proti_file_directory, GUMS_file_directory):
 Proti_file_directory = "/home/farah/Documents/Project/Data/hPer_Data.csv"
 GUMS_file_directory = "/media/farah/T7 Shield/GaiaUniverseModel_0000.csv"
 calculate_prot(Proti_file_directory, GUMS_file_directory)
-

@@ -50,6 +50,7 @@ def plot_1M_Prot_evolution(Prot_evol):
 MASSES = common_lib.MIST_masses() #all the MIST masses we have
 
 # define initial rotation periods
+#P0=np.concatenate((np.arange(0.1,1,0.01),np.arange(0.1,12.1,0.1))) #0.01 step from 0.1 to 1 days (since it is logarithmic) and 0.1 steps from 1 to 12 days
 P0 = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1., 2, 3, 4, 5., 6, 7, 8, 9, 10.])
 
 # define initial stellar masses
